@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import "../App.css";
 import GithubWidget from "./GithubWidget";
 
-// Import your actual club photos from components folder
+// club 1 photos (2 images)
 import clubPhoto1 from "./club-photo-1.jpg";
 import clubPhoto2 from "./club-photo-2.jpg";
+
+// club 2 photos (4 images)
 import club2Photo1 from "./club2-photo-1.jpg";
 import club2Photo2 from "./club2-photo-2.jpg";
 import club2Photo3 from "./club2-photo-3.jpg";
@@ -139,7 +141,7 @@ function Work() {
           >
             <img
               src={clubImages1[clubIndex1]}
-              alt="iDEA Tech Club"
+              alt="Club 1"
               className="club-image"
             />
           </div>
@@ -187,7 +189,7 @@ function Work() {
           >
             <img
               src={clubImages2[clubIndex2]}
-              alt="NSS National Service Scheme"
+              alt="Club 2"
               className="club-image"
             />
           </div>
