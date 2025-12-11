@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
-import Hero from "../src/components/Hero";
-import About from "../src/components/About";
-import Work from "../src/components/Work";
-import Skills from "../src/components/Skills";
-import InteractiveBuddy from "../src/components/InteractiveBuddy";
+import Hero from "./components/Hero";
+import About from "./components/About";
+import Work from "./components/Work";
+import Skills from "./components/Skills";
+import InteractiveBuddy from "./components/InteractiveBuddy";
 
 function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
