@@ -3,16 +3,6 @@ import React, { useState } from "react";
 import "../App.css";
 import GithubWidget from "./GithubWidget";
 
-// club 1 photos (2 images)
-import clubPhoto1 from "./club-photo-1.jpg";
-import clubPhoto2 from "./club-photo-2.jpg";
-
-// club 2 photos (4 images)
-import club2Photo1 from "./club2-photo-1.jpg";
-import club2Photo2 from "./club2-photo-2.jpg";
-import club2Photo3 from "./club2-photo-3.jpg";
-import club2Photo4 from "./club2-photo-4.jpg";
-
 const projects = [
   {
     icon: "🗣️",
@@ -68,10 +58,13 @@ const projects = [
 ];
 
 function Work() {
-  // club 1 slider (2 images)
+  // club 1 slider (2 images) - using placeholder URLs
   const [clubIndex1, setClubIndex1] = useState(0);
   const [isFading1, setIsFading1] = useState(false);
-  const clubImages1 = [clubPhoto1, clubPhoto2];
+  const clubImages1 = [
+    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop",
+  ];
 
   const changeSlide1 = (direction) => {
     if (isFading1) return;
@@ -90,10 +83,15 @@ function Work() {
     }, 200);
   };
 
-  // club 2 slider (4 images)
+  // club 2 slider (4 images) - using placeholder URLs
   const [clubIndex2, setClubIndex2] = useState(0);
   const [isFading2, setIsFading2] = useState(false);
-  const clubImages2 = [club2Photo1, club2Photo2, club2Photo3, club2Photo4];
+  const clubImages2 = [
+    "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&h=600&fit=crop",
+  ];
 
   const changeSlide2 = (direction) => {
     if (isFading2) return;
@@ -141,7 +139,7 @@ function Work() {
           >
             <img
               src={clubImages1[clubIndex1]}
-              alt="Club 1"
+              alt="iDEA Tech Club"
               className="club-image"
             />
           </div>
@@ -189,7 +187,7 @@ function Work() {
           >
             <img
               src={clubImages2[clubIndex2]}
-              alt="Club 2"
+              alt="NSS National Service Scheme"
               className="club-image"
             />
           </div>
