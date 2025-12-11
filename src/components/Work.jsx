@@ -158,14 +158,14 @@ function Work() {
         <div className="club-text">
           <h3 className="club-title">iDEA – tech club</h3>
           <p className="club-description">
-            A techincal club at Amrita school of computing, Coimbatore
+            A technical club at Amrita school of computing, Coimbatore
           </p>
           <p className="club-note">
-            This is a space for motivated developers to collaborate 
-            on innovative projects and expand their skill sets. 
-            Our goal is to foster a dynamic environment where everyone 
-            can contribute and learn from one another. We're confident 
-            that our new members will bring fresh perspectives and valuable talent to our community.
+            This is a space for motivated developers to collaborate on
+            innovative projects and expand their skill sets. Our goal is to
+            foster a dynamic environment where everyone can contribute and learn
+            from one another. We&apos;re confident that our new members will bring
+            fresh perspectives and valuable talent to our community.
           </p>
         </div>
       </div>
@@ -204,14 +204,16 @@ function Work() {
         </div>
 
         <div className="club-text">
-          <h3 className="club-title">NSS(NATIONAL SERVICE SCHEME)</h3>
+          <h3 className="club-title">NSS (NATIONAL SERVICE SCHEME)</h3>
           <p className="club-description">
             The National Service Scheme (NSS) is a voluntary program in India,
-            launched in 1969 by the Government of India under the Ministry of Youth Affairs and Sports,
-             to engage college students in community service and personality development
+            launched in 1969 by the Government of India under the Ministry of
+            Youth Affairs and Sports, to engage college students in community
+            service and personality development
           </p>
           <p className="club-note">
-            As a active member and student coordinator in NSS the special camp was a great experience that developed my character.
+            As an active member and student coordinator in NSS, the special camp
+            was a great experience that developed my character.
           </p>
         </div>
       </div>
