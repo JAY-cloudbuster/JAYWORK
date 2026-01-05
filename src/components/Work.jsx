@@ -35,7 +35,7 @@ const projects = [
       "Clean and user-friendly marketplace platform for browsing and buying products.",
     technologies: ["React", "Node.js", "MongoDB", "REST API"],
     buttons: [
-      { label: "Live Demo", kind: "primary", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
+      { label: "Live Demo", kind: "ghost", href: "https://jay-cloudbuster.github.io/sell-them_jay/" },
       { label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
     ],
   },
