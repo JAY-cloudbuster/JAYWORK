@@ -5,42 +5,42 @@ import GithubWidget from "./GithubWidget";
 
 const projects = [
   {
-    icon: "🗣️",
+    icon: "",
     title: "Hate Speech Detection",
     description:
       "Developed an LSTM-based NLP model to detect hate and offensive speech in tweets.",
     technologies: ["Python", "NLP", "LSTM", "Deep Learning"],
-    buttons: [{ label: "GitHub", kind: "primary", href: "" }],
+    buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/hate-speech-detection" }],
   },
   {
-    icon: "❤️",
+    icon: "",
     title: "Heart Health & Mortality Prediction",
     description:
       "Built a deep learning model using clinical data to predict heart failure risk.",
     technologies: ["Python", "Pandas", "Deep Learning", "Healthcare"],
-    buttons: [{ label: "GitHub", kind: "primary", href: "" }],
+    buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/heart-mortality-prediction" }],
   },
   {
-    icon: "💳",
+    icon: "",
     title: "Credit EDA Prediction",
     description:
       "Created a credit scoring model by analyzing customer and loan history data.",
     technologies: ["Python", "EDA", "Machine Learning"],
-    buttons: [{ label: "GitHub", kind: "primary", href: "" }],
+    buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/credit-EDA" }],
   },
   {
-    icon: "🛒",
+    icon: "",
     title: "BuyThem | Smart Marketplace",
     description:
       "Clean and user-friendly marketplace platform for browsing and buying products.",
     technologies: ["React", "Node.js", "MongoDB", "REST API"],
     buttons: [
-      { label: "Live Demo", kind: "ghost", href: "" },
-      { label: "GitHub", kind: "primary", href: "" },
+      { label: "Live Demo", kind: "ghost", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
+      { label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
     ],
   },
   {
-    icon: "📡",
+    icon: "https://github.com/JAY-cloudbuster/Comparison-study-on-different-distance-measurement-techniques-using-BLE",
     title: "BLE Indoor Distance Measurement",
     description:
       "Compared BLE-based indoor positioning methods using ESP32‑C6 for cost, accuracy, and compatibility.",
@@ -48,7 +48,7 @@ const projects = [
     buttons: [{ label: "GitHub", kind: "primary", href: "" }],
   },
   {
-    icon: "🚦",
+    icon: "https://github.com/23CSE362-edge-computing-2025-26-odd/capstone-project-29_edgenodes",
     title: "Adaptive Traffic Light Optimization",
     description:
       "Fuzzy Logic and Q‑Learning based traffic light optimization using real-time queue length and density.",
