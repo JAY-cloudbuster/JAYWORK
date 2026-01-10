@@ -40,20 +40,20 @@ const projects = [
     ],
   },
   {
-    icon: "https://github.com/JAY-cloudbuster/Comparison-study-on-different-distance-measurement-techniques-using-BLE",
+    icon: "",
     title: "BLE Indoor Distance Measurement",
     description:
       "Compared BLE-based indoor positioning methods using ESP32‑C6 for cost, accuracy, and compatibility.",
     technologies: ["ESP32", "BLE", "IoT", "Signal Processing"],
-    buttons: [{ label: "GitHub", kind: "primary", href: "" }],
+    buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/Comparison-study-on-different-distance-measurement-techniques-using-BLE" }],
   },
   {
-    icon: "https://github.com/23CSE362-edge-computing-2025-26-odd/capstone-project-29_edgenodes",
+    icon: "",
     title: "Adaptive Traffic Light Optimization",
     description:
       "Fuzzy Logic and Q‑Learning based traffic light optimization using real-time queue length and density.",
     technologies: ["Python", "Q-Learning", "Fuzzy Logic"],
-    buttons: [{ label: "GitHub", kind: "primary", href: "" }],
+    buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/23CSE362-edge-computing-2025-26-odd/capstone-project-29_edgenodes" }],
   },
 ];
 
