@@ -1,6 +1,7 @@
 // src/components/Skills.jsx
 import React from "react";
 import "../App.css";
+import useReveal from "../hooks/useReveal";
 
 const categories = [
   {
@@ -22,8 +23,14 @@ const categories = [
 ];
 
 function Skills() {
+  const { ref, isRevealed } = useReveal(0.15);
+
   return (
-    <section id="skills" className="section">
+    <section
+      id="skills"
+      className={`section ${isRevealed ? "revealed" : "reveal"}`}
+      ref={ref}
+    >
       <h2 className="section-title">Skills & Expertise</h2>
       <p className="section-subtitle">Technologies and domains I work with</p>
 
@@ -46,3 +53,4 @@ function Skills() {
 }
 
 export default Skills;
+

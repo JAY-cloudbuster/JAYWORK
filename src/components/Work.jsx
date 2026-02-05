@@ -66,6 +66,8 @@ function Work() {
     "/club-photo-2.jpg",
   ];
 
+
+
   const changeSlide1 = (direction) => {
     if (isFading1) return;
     setIsFading1(true);
@@ -75,8 +77,8 @@ function Work() {
           direction === "next"
             ? (prev + 1) % clubImages1.length
             : prev === 0
-            ? clubImages1.length - 1
-            : prev - 1;
+              ? clubImages1.length - 1
+              : prev - 1;
         return next;
       });
       setIsFading1(false);
@@ -102,8 +104,8 @@ function Work() {
           direction === "next"
             ? (prev + 1) % clubImages2.length
             : prev === 0
-            ? clubImages2.length - 1
-            : prev - 1;
+              ? clubImages2.length - 1
+              : prev - 1;
         return next;
       });
       setIsFading2(false);
@@ -219,7 +221,7 @@ function Work() {
       {/* Project cards grid */}
       <div className="projects-grid">
         {projects.map((p) => (
-          <div key={p.title} className="project-card">
+          <div key={p.title} className="project-card tilt-card">
             <div className="project-icon">{p.icon}</div>
             <h3 className="project-title">{p.title}</h3>
             <p className="project-description">{p.description}</p>
@@ -258,19 +260,19 @@ function Work() {
                 const primary =
                   btn.kind === "primary"
                     ? {
-                        background: "#16a34a",
-                        color: "#ffffff",
-                        border: "none",
-                      }
+                      background: "#16a34a",
+                      color: "#ffffff",
+                      border: "none",
+                    }
                     : {};
 
                 const ghost =
                   btn.kind === "ghost"
                     ? {
-                        background: "transparent",
-                        color: "#16a34a",
-                        border: "1px solid #16a34a",
-                      }
+                      background: "transparent",
+                      color: "#16a34a",
+                      border: "1px solid #16a34a",
+                    }
                     : {};
 
                 return (

@@ -1,10 +1,17 @@
 // src/components/About.jsx
 import React from "react";
 import "../App.css";
+import useReveal from "../hooks/useReveal";
 
 function About() {
+  const { ref, isRevealed } = useReveal(0.15);
+
   return (
-    <section id="about" className="section">
+    <section
+      id="about"
+      className={`section ${isRevealed ? "revealed" : "reveal"}`}
+      ref={ref}
+    >
       <h2 className="section-title">About</h2>
       <p className="section-subtitle">
         CSE Undergraduate at Amrita Vishwa Vidyapeeth | Developer and vice-president at iDEA
@@ -56,3 +63,4 @@ function About() {
 }
 
 export default About;
+

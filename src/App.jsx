@@ -7,6 +7,9 @@ import About from "./components/About";
 import Work from "./components/Work";
 import Skills from "./components/Skills";
 import InteractiveBuddy from "./components/InteractiveBuddy";
+import ThemeToggle from "./components/ThemeToggle";
+import ScrollProgress from "./components/ScrollProgress";
+import Spotlight from "./components/Spotlight";
 
 function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -34,6 +37,12 @@ function App() {
 
   return (
     <>
+      {/* Scroll progress bar */}
+      <ScrollProgress />
+
+      {/* Spotlight effect */}
+      <Spotlight />
+
       {/* interactive background buddy, behind all content */}
       <InteractiveBuddy />
 
@@ -87,6 +96,7 @@ function App() {
 
       {/* Floating side navigation */}
       <nav className="floating-nav">
+        <ThemeToggle />
         <a href="#hero" onClick={handleNavClick("hero")}>
           Home
         </a>
