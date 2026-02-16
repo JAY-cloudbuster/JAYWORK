@@ -6,12 +6,15 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Work from "./components/Work";
 import Skills from "./components/Skills";
+import AirCanvasSection from "./components/AirCanvasSection";
+import AirCanvasPage from "./components/AirCanvasPage";
 import InteractiveBuddy from "./components/InteractiveBuddy";
 import ThemeToggle from "./components/ThemeToggle";
 import ScrollProgress from "./components/ScrollProgress";
 import Spotlight from "./components/Spotlight";
 
 function App() {
+  const [currentPage, setCurrentPage] = useState("home");
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // control visibility of scroll-to-top button
@@ -35,6 +38,23 @@ function App() {
     }
   };
 
+  // Navigate to Air Canvas page
+  const launchAirCanvas = () => {
+    setCurrentPage("aircanvas");
+    window.scrollTo({ top: 0 });
+  };
+
+  const goHome = () => {
+    setCurrentPage("home");
+    window.scrollTo({ top: 0 });
+  };
+
+  // ─── Air Canvas Full Page ───
+  if (currentPage === "aircanvas") {
+    return <AirCanvasPage onBack={goHome} />;
+  }
+
+  // ─── Home Page ───
   return (
     <>
       {/* Scroll progress bar */}
@@ -51,8 +71,9 @@ function App() {
         <About />
         <Work />
         <Skills />
+        <AirCanvasSection onLaunch={launchAirCanvas} />
 
-        {/* Minimal black & white contact section */}
+        {/* Minimal contact section */}
         <section id="contact" className="section contact-section">
           <h2 className="contact-title">Let&apos;s build something.</h2>
           <p className="contact-subtitle">
@@ -107,6 +128,9 @@ function App() {
         </a>
         <a href="#skills" onClick={handleNavClick("skills")}>
           Skills
+        </a>
+        <a href="#aircanvas" onClick={handleNavClick("aircanvas")}>
+          AI Lab
         </a>
         <a href="#contact" onClick={handleNavClick("contact")}>
           Contact
