@@ -11,8 +11,6 @@ export default {
       },
       colors: {
         'light-gray': '#f8f9fa',
-        'pumpkin': '#FD802E',
-        'charcoal': '#233D4C',
       }
     },
   },

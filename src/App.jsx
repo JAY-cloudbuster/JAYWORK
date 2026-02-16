@@ -82,8 +82,7 @@ function App() {
           <a href="mailto:kjayeshro@gmail.com">Email</a>
         </div>
         <p>
-          &copy; 2025 Jay. All rights reserved. | Passionate about Code, AI, and
-          DevOps
+          &copy; 2026 Jay. Built with passion for Code, AI, and DevOps.
         </p>
       </footer>
 

@@ -1,38 +1,58 @@
-/* src/index.css */
+/* src/index.css — Design System Foundation */
+
 :root {
-  --color-black: #233D4C;
-  --color-white: #FD802E;
-  --color-gray-1: #2a4a5b;
-  --color-gray-2: #325669;
-  --color-gray-3: #4a6f82;
-  --color-gray-4: #a0a0a0;
-  --color-gray-5: #e0e0e0;
-  --transition: all 0.3s ease-out;
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Theme-specific variables (dark mode default) */
-  --bg-primary: #233D4C;
-  --bg-secondary: #1e3542;
-  --bg-tertiary: #192d38;
-  --bg-card: #2a4555;
-  --text-primary: #FD802E;
-  --text-secondary: #e0e0e0;
-  --text-muted: #a0a0a0;
-  --border-color: #325669;
+  /* Palette: Deep OLED-friendly dark */
+  --color-black: #000000;
+  --color-white: #f0f0f0;
+  --color-gray-1: #111111;
+  --color-gray-2: #1c1c1c;
+  --color-gray-3: #3a3a3a;
+  --color-gray-4: #8a8a8a;
+  --color-gray-5: #d4d4d4;
+
+  /* Accent — subtle warm highlight */
+  --accent: #c8b6ff;
+  --accent-dim: rgba(200, 182, 255, 0.12);
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Theme-specific (dark default) */
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --bg-card: rgba(17, 17, 17, 0.7);
+  --text-primary: #f0f0f0;
+  --text-secondary: #8a8a8a;
+  --text-muted: #4a4a4a;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* Light mode theme - Inverted for specific request (White->Pumpkin, Black->Charcoal) */
+/* Light mode */
 [data-theme="light"] {
-  --bg-primary: #FD802E;
-  --bg-secondary: #fc8d45;
-  --bg-tertiary: #fa9a5c;
-  --bg-card: #ffae76;
-  --text-primary: #233D4C;
-  --text-secondary: #1e3542;
-  --text-muted: #192d38;
-  --border-color: #233D4C;
+  --bg-primary: #fafafa;
+  --bg-secondary: #f0f0f0;
+  --bg-tertiary: #e4e4e4;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --accent: #7c5cfc;
+  --accent-dim: rgba(124, 92, 252, 0.08);
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --card-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-* {
+/* Reset */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -40,37 +60,47 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
-    sans-serif;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  font-family: var(--font-body);
+  background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.7;
   overflow-x: hidden;
   position: relative;
-  transition: background 0.4s ease, color 0.4s ease;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
+/* Subtle noise grain overlay */
 body::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle at 20% 50%,
-      rgba(128, 128, 128, 0.03) 0%,
-      transparent 50%),
-    radial-gradient(circle at 80% 80%,
-      rgba(128, 128, 128, 0.02) 0%,
-      transparent 50%),
-    repeating-linear-gradient(45deg,
-      transparent,
-      transparent 35px,
-      rgba(128, 128, 128, 0.01) 35px,
-      rgba(128, 128, 128, 0.01) 70px);
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+[data-theme="light"] body::before {
+  opacity: 0.3;
+}
+
+/* Heading typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+/* Selection color */
+::selection {
+  background: var(--accent);
+  color: var(--bg-primary);
 }

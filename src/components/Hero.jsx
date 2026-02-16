@@ -14,15 +14,12 @@ function useTypingEffect(phrases, typingSpeed = 100, deletingSpeed = 50, pauseTi
 
     const timeout = setTimeout(() => {
       if (!isDeleting) {
-        // Typing
         if (displayText.length < currentPhrase.length) {
           setDisplayText(currentPhrase.slice(0, displayText.length + 1));
         } else {
-          // Pause before deleting
           setTimeout(() => setIsDeleting(true), pauseTime);
         }
       } else {
-        // Deleting
         if (displayText.length > 0) {
           setDisplayText(displayText.slice(0, -1));
         } else {
@@ -57,7 +54,7 @@ function Hero() {
   return (
     <section id="hero" className="hero">
       <div className="hero-content">
-        {/* Profile card at the very top */}
+        {/* Compact profile pill */}
         <div className="profile-card">
           <div className="profile-avatar">
             <img src={profileImg} alt="Jayesh Rao Kalla" />
@@ -69,10 +66,10 @@ function Hero() {
           <span className="typed-text">{typedText}</span>
           <span className="typing-cursor">|</span>
         </div>
-        <h1 className="hero-title">Crafting Intelligent Solutions</h1>
+        <h1 className="hero-title">Crafting Intelligent<br />Solutions</h1>
         <p className="hero-description">
           Building scalable web applications, exploring machine learning, and
-          designing DevOps infrastructure. Based in Amrita school of computing, Coimbatore.
+          designing DevOps infrastructure. Based in Amrita School of Computing, Coimbatore.
         </p>
         <button className="cta-button magnetic-button" onClick={goToWork}>
           Explore My Work
@@ -83,5 +80,3 @@ function Hero() {
 }
 
 export default Hero;
-
-
