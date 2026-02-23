@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "../App.css";
 import GithubWidget from "./GithubWidget";
+import GitHubContributions from "./GitHubContributions";
 
 const projects = [
   {
@@ -105,6 +106,9 @@ function Work() {
         <div className="bento-item bento-span-4x1" style={{ padding: 0, background: "transparent", border: "none", boxShadow: "none" }}>
           <GithubWidget />
         </div>
+
+        {/* GitHub Contributions Section */}
+        <GitHubContributions />
 
         {/* Club 1 — 2x2 bento cell */}
         <div className="bento-item bento-span-2x2 club-bento-card">
