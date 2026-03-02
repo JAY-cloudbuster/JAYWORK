@@ -25,14 +25,14 @@ export default function Preloader({ onComplete }) {
 
         const letters = letterRefs.current;
 
-        // ─── Phase 1: Entrance — blur-to-focus with stagger (~1.8s total) ───
+        // ─── Phase 1: Entrance — all letters fade in together, slow & cinematic ───
         tl.to(letters, {
             opacity: 1,
             filter: "blur(0px)",
             scale: 1,
-            duration: 1.2,
+            duration: 2.2,
             stagger: {
-                each: 0.07,
+                each: 0.02,
                 from: "center",
             },
             ease: "power2.out",
@@ -45,13 +45,13 @@ export default function Preloader({ onComplete }) {
             });
         });
 
-        // ─── Phase 2: Hold — brief pulse glow (~1.5s) ───
+        // ─── Phase 2: Hold — pulse glow (~2s) ───
         tl.call(() => {
             letters.forEach((el) => {
                 if (el) el.classList.add("preloader-letter--pulse");
             });
         });
-        tl.to({}, { duration: 1.5 }); // hold
+        tl.to({}, { duration: 2 }); // hold
 
         // Remove pulse before exit
         tl.call(() => {
@@ -63,14 +63,14 @@ export default function Preloader({ onComplete }) {
             });
         });
 
-        // ─── Phase 3: Exit — fade out letters (faster than entrance) ───
+        // ─── Phase 3: Exit — letters fade out together ───
         tl.to(letters, {
             opacity: 0,
             y: -20,
             filter: "blur(6px)",
-            duration: 0.7,
+            duration: 1.2,
             stagger: {
-                each: 0.04,
+                each: 0.02,
                 from: "edges",
             },
             ease: "power2.in",
@@ -79,7 +79,7 @@ export default function Preloader({ onComplete }) {
         // ─── Phase 4: Transition — slide overlay up to reveal page ───
         tl.to(overlayRef.current, {
             y: "-100%",
-            duration: 0.6,
+            duration: 0.8,
             ease: "power3.inOut",
         });
 
