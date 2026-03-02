@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
+import Preloader from "./components/Preloader";
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Work from "./components/Work";
@@ -16,6 +17,9 @@ import Spotlight from "./components/Spotlight";
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [loading, setLoading] = useState(
+    () => !sessionStorage.getItem("preloader_played")
+  );
 
   // control visibility of scroll-to-top button
   useEffect(() => {
@@ -57,6 +61,9 @@ function App() {
   // ─── Home Page ───
   return (
     <>
+      {/* Cinematic preloader */}
+      {loading && <Preloader onComplete={() => setLoading(false)} />}
+
       {/* Scroll progress bar */}
       <ScrollProgress />
 
