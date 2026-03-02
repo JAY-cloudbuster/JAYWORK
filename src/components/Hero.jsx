@@ -54,18 +54,18 @@ function Hero() {
   return (
     <section id="hero" className="hero">
       <div className="hero-content">
-        {/* Availability badge */}
-        <div className="availability-badge">
-          <span className="availability-dot" />
-          <span>Open to Opportunities</span>
-        </div>
-
         {/* Compact profile pill */}
         <div className="profile-card">
           <div className="profile-avatar">
             <img src={profileImg} alt="Jayesh Rao Kalla" />
           </div>
           <div className="profile-name">Jayesh Rao Kalla</div>
+        </div>
+
+        {/* Availability badge */}
+        <div className="availability-badge">
+          <span className="availability-dot" />
+          <span>Open to Opportunities</span>
         </div>
 
         <div className="hero-subtitle">
