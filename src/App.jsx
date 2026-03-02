@@ -15,6 +15,7 @@ import ThemeToggle from "./components/ThemeToggle";
 import ScrollProgress from "./components/ScrollProgress";
 import Spotlight from "./components/Spotlight";
 import CommandPalette from "./components/CommandPalette";
+import Connect from "./components/Connect";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -85,40 +86,10 @@ function App() {
         <Work />
         <Skills />
         <AirCanvasSection onLaunch={launchAirCanvas} />
-
-        {/* Minimal contact section */}
-        <section id="contact" className="section contact-section">
-          <h2 className="contact-title">Let&apos;s build something.</h2>
-          <p className="contact-subtitle">
-            Prefer email? Reach out anytime, and replies are usually within 24 hours.
-          </p>
-
-          <div className="contact-actions">
-            <a
-              href="mailto:kjayeshro@gmail.com"
-              className="contact-primary contact-full"
-            >
-              EMAIL ME
-            </a>
-          </div>
-        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="social-links">
-          <a href="https://github.com" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-          <a href="mailto:kjayeshro@gmail.com">Email</a>
-        </div>
-        <p>
-          &copy; 2026 Jay. Built with passion for Code, AI, and DevOps.
-        </p>
-      </footer>
+      {/* Connect section + footer */}
+      <Connect />
 
       {/* Scroll-to-top button */}
       {showScrollTop && (

@@ -39,7 +39,7 @@ export default function Preloader({ onComplete }) {
         });
 
         // ─── Phase 2: Hold — clean pause (~2s) ───
-        tl.to({}, { duration: 2 });
+        tl.to({}, { duration: 1.5 });
 
         // ─── Phase 3: Exit — letters fade out together ───
         tl.to(letters, {

@@ -102,6 +102,83 @@ function Work() {
       {/* Bento Grid */}
       <div className="bento-grid">
 
+        {/* ── Featured Project — 2×2 hero tile ── */}
+        <div className="bento-item bento-span-2x2 bento-featured">
+          <div className="bento-featured-img">
+            <img src="/club-photo-1.jpg" alt="BuyThem Marketplace" />
+          </div>
+          <div className="bento-featured-content">
+            <span className="bento-featured-badge">Featured</span>
+            <h3 className="project-title">BuyThem | Smart Marketplace</h3>
+            <p className="project-description">
+              Clean and user-friendly marketplace platform for browsing and buying products.
+            </p>
+            <div className="project-buttons">
+              <a
+                href="https://jay-cloudbuster.github.io/sell-them_jay/"
+                target="_blank"
+                rel="noreferrer"
+                className="project-btn project-btn-primary"
+              >
+                View Project →
+              </a>
+              <a
+                href="https://github.com/JAY-cloudbuster/sell-them_jay"
+                target="_blank"
+                rel="noreferrer"
+                className="project-btn project-btn-ghost"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* ── About Me — mini tile ── */}
+        <div className="bento-item bento-about-mini">
+          <div className="bento-about-status">
+            <span className="availability-dot" />
+            <span>Available for Work</span>
+          </div>
+          <h3 className="bento-about-name">Jayesh Rao</h3>
+          <p className="bento-about-bio">
+            CSE Undergrad · Full-Stack Dev · ML Engineer · iDEA Club VP
+          </p>
+        </div>
+
+        {/* ── Social Links — quick actions ── */}
+        <div className="bento-item bento-socials">
+          <h4 className="bento-socials-title">Connect</h4>
+          <div className="bento-socials-grid">
+            <a href="https://github.com/JAY-cloudbuster" target="_blank" rel="noreferrer" className="bento-social-btn">
+              <span>🐙</span> GitHub
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="bento-social-btn">
+              <span>🔗</span> LinkedIn
+            </a>
+            <a href="mailto:kjayeshro@gmail.com" className="bento-social-btn">
+              <span>📧</span> Email
+            </a>
+            <a href="/resume.pdf" download className="bento-social-btn">
+              <span>📄</span> Resume
+            </a>
+          </div>
+        </div>
+
+        {/* ── Tech Stack — marquee tile ── */}
+        <div className="bento-item bento-span-2x1 bento-techstack">
+          <h4 className="bento-techstack-title">Tech Stack</h4>
+          <div className="marquee-wrapper">
+            <div className="marquee-track">
+              {["React", "Node.js", "Python", "MongoDB", "Docker", "TensorFlow", "PostgreSQL", "AWS", "Git", "Linux",
+                "React", "Node.js", "Python", "MongoDB", "Docker", "TensorFlow", "PostgreSQL", "AWS", "Git", "Linux"
+              ].map((tech, i) => (
+                <span key={i} className="marquee-pill">{tech}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* GitHub Widget — full width row */}
         <div className="bento-item bento-span-4x1" style={{ padding: 0, background: "transparent", border: "none", boxShadow: "none" }}>
           <GithubWidget />
