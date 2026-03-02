@@ -38,30 +38,8 @@ export default function Preloader({ onComplete }) {
             ease: "power2.out",
         });
 
-        // Add chromatic glow class after entrance
-        tl.call(() => {
-            letters.forEach((el) => {
-                if (el) el.classList.add("preloader-letter--glow");
-            });
-        });
-
-        // ─── Phase 2: Hold — pulse glow (~2s) ───
-        tl.call(() => {
-            letters.forEach((el) => {
-                if (el) el.classList.add("preloader-letter--pulse");
-            });
-        });
-        tl.to({}, { duration: 2 }); // hold
-
-        // Remove pulse before exit
-        tl.call(() => {
-            letters.forEach((el) => {
-                if (el) {
-                    el.classList.remove("preloader-letter--pulse");
-                    el.classList.remove("preloader-letter--glow");
-                }
-            });
-        });
+        // ─── Phase 2: Hold — clean pause (~2s) ───
+        tl.to({}, { duration: 2 });
 
         // ─── Phase 3: Exit — letters fade out together ───
         tl.to(letters, {
