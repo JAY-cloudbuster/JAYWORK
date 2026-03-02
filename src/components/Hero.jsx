@@ -62,12 +62,6 @@ function Hero() {
           <div className="profile-name">Jayesh Rao Kalla</div>
         </div>
 
-        {/* Availability badge */}
-        <div className="availability-badge">
-          <span className="availability-dot" />
-          <span>Open to Opportunities</span>
-        </div>
-
         <div className="hero-subtitle">
           <span className="typed-text">{typedText}</span>
           <span className="typing-cursor">|</span>
