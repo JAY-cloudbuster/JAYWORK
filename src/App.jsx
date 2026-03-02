@@ -5,6 +5,7 @@ import "./App.css";
 import Preloader from "./components/Preloader";
 import Hero from "./components/Hero";
 import About from "./components/About";
+import Experience from "./components/Experience";
 import Work from "./components/Work";
 import Skills from "./components/Skills";
 import AirCanvasSection from "./components/AirCanvasSection";
@@ -13,6 +14,7 @@ import InteractiveBuddy from "./components/InteractiveBuddy";
 import ThemeToggle from "./components/ThemeToggle";
 import ScrollProgress from "./components/ScrollProgress";
 import Spotlight from "./components/Spotlight";
+import CommandPalette from "./components/CommandPalette";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -64,6 +66,9 @@ function App() {
       {/* Cinematic preloader */}
       {loading && <Preloader onComplete={() => setLoading(false)} />}
 
+      {/* Command palette (⌘K) */}
+      <CommandPalette />
+
       {/* Scroll progress bar */}
       <ScrollProgress />
 
@@ -76,6 +81,7 @@ function App() {
       <main>
         <Hero />
         <About />
+        <Experience />
         <Work />
         <Skills />
         <AirCanvasSection onLaunch={launchAirCanvas} />
@@ -129,6 +135,9 @@ function App() {
         </a>
         <a href="#about" onClick={handleNavClick("about")}>
           About
+        </a>
+        <a href="#experience" onClick={handleNavClick("experience")}>
+          Experience
         </a>
         <a href="#work" onClick={handleNavClick("work")}>
           Work

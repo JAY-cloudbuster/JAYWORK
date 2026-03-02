@@ -54,6 +54,12 @@ function Hero() {
   return (
     <section id="hero" className="hero">
       <div className="hero-content">
+        {/* Availability badge */}
+        <div className="availability-badge">
+          <span className="availability-dot" />
+          <span>Open to Opportunities</span>
+        </div>
+
         {/* Compact profile pill */}
         <div className="profile-card">
           <div className="profile-avatar">
@@ -71,9 +77,18 @@ function Hero() {
           Building scalable web applications, exploring machine learning, and
           designing DevOps infrastructure. Based in Amrita School of Computing, Coimbatore.
         </p>
-        <button className="cta-button magnetic-button" onClick={goToWork}>
-          Explore My Work
-        </button>
+        <div className="hero-buttons">
+          <button className="cta-button magnetic-button" onClick={goToWork}>
+            Explore My Work
+          </button>
+          <a
+            href="/resume.pdf"
+            download="Jayesh_Rao_Resume.pdf"
+            className="cta-button cta-button--ghost magnetic-button"
+          >
+            ↓ Download Resume
+          </a>
+        </div>
       </div>
     </section>
   );
