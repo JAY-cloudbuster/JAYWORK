@@ -3,18 +3,18 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "../App.css";
 
 const COMMANDS = [
-    { id: "home", label: "Go to Home", section: "Navigate", icon: "🏠", action: "scroll", target: "hero" },
-    { id: "about", label: "Go to About", section: "Navigate", icon: "👤", action: "scroll", target: "about" },
-    { id: "experience", label: "Go to Experience", section: "Navigate", icon: "📋", action: "scroll", target: "experience" },
-    { id: "work", label: "Go to Work", section: "Navigate", icon: "💼", action: "scroll", target: "work" },
-    { id: "skills", label: "Go to Skills", section: "Navigate", icon: "⚡", action: "scroll", target: "skills" },
-    { id: "ailab", label: "Go to AI Lab", section: "Navigate", icon: "🧪", action: "scroll", target: "aircanvas" },
-    { id: "contact", label: "Go to Contact", section: "Navigate", icon: "✉️", action: "scroll", target: "contact" },
-    { id: "theme", label: "Toggle Theme", section: "Actions", icon: "🌓", action: "theme" },
-    { id: "resume", label: "Download Resume", section: "Actions", icon: "📄", action: "download", url: "/resume.pdf" },
-    { id: "github", label: "Open GitHub", section: "Links", icon: "🐙", action: "link", url: "https://github.com/JAY-cloudbuster" },
-    { id: "linkedin", label: "Open LinkedIn", section: "Links", icon: "🔗", action: "link", url: "https://linkedin.com" },
-    { id: "email", label: "Send Email", section: "Links", icon: "📧", action: "link", url: "mailto:kjayeshro@gmail.com" },
+    { id: "home", label: "Go to Home", section: "Navigate", icon: "", action: "scroll", target: "hero" },
+    { id: "about", label: "Go to About", section: "Navigate", icon: "", action: "scroll", target: "about" },
+    { id: "experience", label: "Go to Experience", section: "Navigate", icon: "", action: "scroll", target: "experience" },
+    { id: "work", label: "Go to Work", section: "Navigate", icon: "", action: "scroll", target: "work" },
+    { id: "skills", label: "Go to Skills", section: "Navigate", icon: "", action: "scroll", target: "skills" },
+    { id: "ailab", label: "Go to AI Lab", section: "Navigate", icon: "", action: "scroll", target: "aircanvas" },
+    { id: "contact", label: "Go to Contact", section: "Navigate", icon: "", action: "scroll", target: "contact" },
+    { id: "theme", label: "Toggle Theme", section: "Actions", icon: "", action: "theme" },
+    { id: "resume", label: "Download Resume", section: "Actions", icon: "", action: "download", url: "/resume.pdf" },
+    { id: "github", label: "Open GitHub", section: "Links", icon: "", action: "link", url: "https://github.com/JAY-cloudbuster" },
+    { id: "linkedin", label: "Open LinkedIn", section: "Links", icon: "", action: "link", url: "https://linkedin.com" },
+    { id: "email", label: "Send Email", section: "Links", icon: "", action: "link", url: "mailto:kjayeshro@gmail.com" },
 ];
 
 export default function CommandPalette() {
