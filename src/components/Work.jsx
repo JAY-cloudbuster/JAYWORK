@@ -151,16 +151,16 @@ function Work() {
           <h4 className="bento-socials-title">Connect</h4>
           <div className="bento-socials-grid">
             <a href="https://github.com/JAY-cloudbuster" target="_blank" rel="noreferrer" className="bento-social-btn">
-              <span>🐙</span> GitHub
+              <span></span> GitHub
             </a>
             <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="bento-social-btn">
-              <span>🔗</span> LinkedIn
+              <span></span> LinkedIn
             </a>
             <a href="mailto:kjayeshro@gmail.com" className="bento-social-btn">
-              <span>📧</span> Email
+              <span></span> Email
             </a>
             <a href="/resume.pdf" download className="bento-social-btn">
-              <span>📄</span> Resume
+              <span></span> Resume
             </a>
           </div>
         </div>
