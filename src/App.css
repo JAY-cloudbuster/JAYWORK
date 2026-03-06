@@ -1056,59 +1056,237 @@
   text-decoration: underline;
 }
 
-/* GitHub Profile Stats & Streak */
-.github-profile-stats {
-  display: flex;
-  gap: 2rem;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  width: 100%;
+/* ═══════════════════════════════════════════
+   GITHUB CONTRIBUTION GRAPH
+   ═══════════════════════════════════════════ */
+
+.contrib-graph-card {
+  padding: 1.5rem 1.8rem !important;
+  overflow: visible;
 }
 
-.github-stat-item {
+.contrib-graph-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.contrib-graph-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.contrib-graph-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.contrib-graph-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.contrib-graph-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  transition: color 0.4s ease;
+}
+
+/* Month labels row */
+.contrib-months {
+  position: relative;
+  height: 20px;
+  margin-bottom: 4px;
+  min-width: fit-content;
+}
+
+.contrib-month-label {
+  position: absolute;
+  top: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.4s ease;
+}
+
+/* Grid area: day labels + grid */
+.contrib-grid-area {
+  display: flex;
+  align-items: flex-start;
+  min-width: fit-content;
+}
+
+/* Day labels column */
+.contrib-days {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding-top: 0;
+}
+
+.contrib-day-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  user-select: none;
+  transition: color 0.4s ease;
+}
+
+/* The grid of cells */
+.contrib-grid {
+  display: flex;
+  gap: 3px;
+}
+
+.contrib-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Individual cell */
+.contrib-cell {
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transition: outline 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+  position: relative;
+}
+
+.contrib-cell:hover {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: -1px;
+  transform: scale(1.3);
+  z-index: 2;
+}
+
+.contrib-cell:focus-visible,
+.contrib-cell-focused {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  transform: scale(1.3);
+  z-index: 2;
+}
+
+/* Tooltip */
+.contrib-tooltip {
+  position: absolute;
+  z-index: 100;
+  transform: translate(-50%, -100%);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  pointer-events: none;
+  white-space: nowrap;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  gap: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
 }
 
-.github-stat-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.github-stat-value {
-  font-size: 1.4rem;
+.contrib-tooltip strong {
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.github-streak-container {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
-  text-align: center;
+.contrib-tooltip span {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
-.github-streak-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  letter-spacing: 0.02em;
-}
-
-.github-streak-image {
+/* Footer: total count + legend */
+.contrib-footer {
   display: flex;
-  justify-content: center;
-  margin: 1rem 0;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.github-streak-image svg {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
+.contrib-total {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.4s ease;
+}
+
+/* Legend */
+.contrib-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contrib-legend-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0 2px;
+  user-select: none;
+  transition: color 0.4s ease;
+}
+
+.contrib-legend-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+
+/* Light mode tooltip override */
+[data-theme="light"] .contrib-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading / Error states */
+.contrib-loading {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.contrib-error {
+  text-align: center;
+  padding: 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.contrib-error button {
+  margin-left: 0.5rem;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.contrib-error button:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
 }
 
 /* ═══════════════════════════════════════════
@@ -1386,19 +1564,8 @@
   }
 }
 
-@media (max-width: 768px) {
-  .github-profile-stats {
-    gap: 1.5rem;
-  }
 
-  .github-stat-value {
-    font-size: 1.2rem;
-  }
 
-  .github-streak-image svg {
-    max-width: 100%;
-  }
-}
 
 /* ═══════════════════════════════════════════
    AIR CANVAS — INFO SECTION
