@@ -52,9 +52,9 @@ const TIMELINE_DATA = [
 ];
 
 const TYPE_ICONS = {
-    role: "💼",
-    education: "🎓",
-    project: "🚀",
+    role: "O",
+    education: "O",
+    project: "O",
 };
 
 function TimelineItem({ item, index }) {
