@@ -6,7 +6,7 @@ import useReveal from "../hooks/useReveal";
 const TIMELINE_DATA = [
     {
         date: "2024 — Present",
-        title: "Vice-President & Developer",
+        title: "Ex Vice-President & Developer",
         subtitle: "iDEA Club, Amrita Vishwa Vidyapeeth",
         description:
             "Leading technical initiatives, mentoring students, and organizing hackathons. Built internal tools and managed club's web presence.",
