@@ -27,16 +27,6 @@ const projects = [
     buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/credit-EDA" }],
   },
   {
-    title: "BuyThem | Smart Marketplace",
-    description:
-      "Clean and user-friendly marketplace platform for browsing and buying products.",
-    technologies: ["React", "Node.js", "MongoDB", "REST API"],
-    buttons: [
-      { label: "Live Demo", kind: "ghost", href: "https://jay-cloudbuster.github.io/sell-them_jay/" },
-      { label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
-    ],
-  },
-  {
     title: "BLE Indoor Distance",
     description:
       "Compared BLE-based indoor positioning methods using ESP32‑C6 for cost, accuracy, and compatibility.",
@@ -50,7 +40,18 @@ const projects = [
     technologies: ["Python", "Q-Learning", "Fuzzy Logic"],
     buttons: [{ label: "GitHub", kind: "primary", href: "https://github.com/23CSE362-edge-computing-2025-26-odd/capstone-project-29_edgenodes" }],
   },
+  {
+    title: "BuyThem | Smart Marketplace",
+    description:
+      "Clean and user-friendly marketplace platform for browsing and buying products.",
+    technologies: ["React", "Node.js", "MongoDB", "REST API"],
+    buttons: [
+      { label: "Live Demo", kind: "ghost", href: "https://jay-cloudbuster.github.io/sell-them_jay/" },
+      { label: "GitHub", kind: "primary", href: "https://github.com/JAY-cloudbuster/sell-them_jay" },
+    ],
+  },
 ];
+
 
 function Work() {
   // Club 1 slider
@@ -102,37 +103,6 @@ function Work() {
       {/* Bento Grid */}
       <div className="bento-grid">
 
-        {/* ── Featured Project — 2×2 hero tile ── */}
-        <div className="bento-item bento-span-2x2 bento-featured">
-          <div className="bento-featured-img">
-            <img src="/club-photo-1.jpg" alt="BuyThem Marketplace" />
-          </div>
-          <div className="bento-featured-content">
-            <span className="bento-featured-badge">Featured</span>
-            <h3 className="project-title">BuyThem | Smart Marketplace</h3>
-            <p className="project-description">
-              Clean and user-friendly marketplace platform for browsing and buying products.
-            </p>
-            <div className="project-buttons">
-              <a
-                href="https://jay-cloudbuster.github.io/sell-them_jay/"
-                target="_blank"
-                rel="noreferrer"
-                className="project-btn project-btn-primary"
-              >
-                View Project →
-              </a>
-              <a
-                href="https://github.com/JAY-cloudbuster/sell-them_jay"
-                target="_blank"
-                rel="noreferrer"
-                className="project-btn project-btn-ghost"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-        </div>
 
         {/* ── About Me — mini tile ── */}
         <div className="bento-item bento-about-mini">
