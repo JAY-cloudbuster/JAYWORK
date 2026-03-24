@@ -1,272 +1,132 @@
 // src/components/InteractiveBuddy.jsx
-// Pixel Art Lion Pet — follows cursor, reacts to scroll, section-aware speech
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../App.css";
 
-const SECTION_MESSAGES = {
-  hero: ["Roar! Welcome! 🦁", "Hey explorer!", "Let's go! 💪"],
-  about: ["Interesting... 🤔", "Tell me more!", "Cool story! 📖"],
-  work: ["Great projects! ✨", "So creative!", "I'm impressed! 🎯"],
-  skills: ["So many skills!", "Talented! 🌟", "Level up! ⬆️"],
-  contact: ["Say hi! 📧", "Let's connect!", "Don't be shy! 💌"],
-  aircanvas: ["AI is cool! 🤖", "Draw something!", "Magic! ✨"],
-  default: ["Scroll around!", "Explore! 🔍", "*purrs*"],
+// Shapes map section to emoji/character
+const SHAPES = {
+  hero: "👻",
+  about: "👤",
+  work: "</>",
+  skills: "🧠",
+  contact: "✉️",
+  aircanvas: "✨",
+  default: "👻"
 };
 
-const IDLE_EMOTES = ["😺", "💤", "✨", "🦁", "💭"];
+const NUM_PARTICLES = 1200;
+const CANVAS_SIZE = 240;
 
-// ── Pixel Lion drawing on canvas ──
-function drawLion(ctx, w, h, eyeOffsetX, eyeOffsetY, state, frame) {
-  ctx.clearRect(0, 0, w, h);
-  ctx.imageSmoothingEnabled = false;
-
-  const cx = w / 2;
-  const cy = h / 2;
-  const scale = Math.min(w, h) / 64;
-
-  // Breathing animation
-  const breathe = Math.sin(frame * 0.06) * 1.5;
-  const tailWag = Math.sin(frame * 0.12) * 8;
-
-  ctx.save();
-  ctx.translate(cx, cy + breathe);
-  ctx.scale(scale, scale);
-
-  // ── Tail ──
-  ctx.save();
-  ctx.translate(18, 4);
-  ctx.rotate((tailWag * Math.PI) / 180);
-  ctx.fillStyle = "#D4891C";
-  ctx.fillRect(0, -1, 8, 3);
-  ctx.fillRect(8, -2, 3, 2);
-  ctx.fillStyle = "#1a1a1a";
-  ctx.fillRect(10, -3, 4, 4);
-  ctx.restore();
-
-  // ── Body ──
-  ctx.fillStyle = "#E8A430";
-  ctx.beginPath();
-  roundRect(ctx, -14, -2, 28, 18, 6);
-  ctx.fill();
-
-  // Belly
-  ctx.fillStyle = "#F5D48B";
-  ctx.beginPath();
-  roundRect(ctx, -8, 4, 16, 10, 4);
-  ctx.fill();
-
-  // ── Legs ──
-  ctx.fillStyle = "#D4891C";
-  // Front legs
-  ctx.fillRect(-12, 13, 5, 8);
-  ctx.fillRect(7, 13, 5, 8);
-  // Back legs (slight offset)
-  ctx.fillRect(-10, 14, 4, 7);
-  ctx.fillRect(6, 14, 4, 7);
-
-  // Paws
-  ctx.fillStyle = "#F5D48B";
-  ctx.fillRect(-12, 19, 5, 3);
-  ctx.fillRect(7, 19, 5, 3);
-
-  // ── Mane ──
-  ctx.fillStyle = "#C06B18";
-  ctx.beginPath();
-  ctx.arc(0, -6, 18, Math.PI * 0.8, Math.PI * 2.2);
-  ctx.fill();
-
-  ctx.fillStyle = "#D4891C";
-  ctx.beginPath();
-  ctx.arc(0, -4, 15, Math.PI * 0.85, Math.PI * 2.15);
-  ctx.fill();
-
-  // ── Head ──
-  ctx.fillStyle = "#E8A430";
-  ctx.beginPath();
-  roundRect(ctx, -12, -18, 24, 20, 8);
-  ctx.fill();
-
-  // ── Ears ──
-  ctx.fillStyle = "#D4891C";
-  ctx.beginPath();
-  ctx.arc(-10, -17, 5, 0, Math.PI * 2);
-  ctx.arc(10, -17, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#F5B7C8";
-  ctx.beginPath();
-  ctx.arc(-10, -17, 3, 0, Math.PI * 2);
-  ctx.arc(10, -17, 3, 0, Math.PI * 2);
-  ctx.fill();
-
-  // ── Eyes ──
-  const maxEyeMove = 2.5;
-  const ex = Math.max(-maxEyeMove, Math.min(maxEyeMove, eyeOffsetX * 4));
-  const ey = Math.max(-maxEyeMove, Math.min(maxEyeMove, eyeOffsetY * 4));
-
-  if (state === "blink" || (frame % 180 > 170 && frame % 180 < 178)) {
-    // Blinking — closed eyes
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(-8, -9, 5, 2);
-    ctx.fillRect(3, -9, 5, 2);
-  } else if (state === "dizzy") {
-    // Dizzy spiral eyes
-    ctx.strokeStyle = "#1a1a1a";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(-5.5 + ex, -9 + ey, 3, 0, Math.PI * 3);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(5.5 + ex, -9 + ey, 3, 0, Math.PI * 3);
-    ctx.stroke();
-  } else if (state === "happy") {
-    // Happy ^ ^ eyes
-    ctx.fillStyle = "#1a1a1a";
-    ctx.beginPath();
-    ctx.moveTo(-8, -8);
-    ctx.lineTo(-5.5, -11);
-    ctx.lineTo(-3, -8);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(3, -8);
-    ctx.lineTo(5.5, -11);
-    ctx.lineTo(8, -8);
-    ctx.stroke();
-  } else if (state === "sleep") {
-    // Sleeping — closed eyes with Zz
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(-8, -9, 5, 2);
-    ctx.fillRect(3, -9, 5, 2);
-  } else {
-    // Normal eyes
-    // Whites
-    ctx.fillStyle = "#FFFFFF";
-    ctx.beginPath();
-    ctx.arc(-5.5, -9, 4, 0, Math.PI * 2);
-    ctx.arc(5.5, -9, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Pupils
-    ctx.fillStyle = "#1a1a1a";
-    ctx.beginPath();
-    ctx.arc(-5.5 + ex, -9 + ey, 2, 0, Math.PI * 2);
-    ctx.arc(5.5 + ex, -9 + ey, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Highlights
-    ctx.fillStyle = "#FFFFFF";
-    ctx.beginPath();
-    ctx.arc(-5 + ex * 0.5, -10 + ey * 0.5, 0.8, 0, Math.PI * 2);
-    ctx.arc(6 + ex * 0.5, -10 + ey * 0.5, 0.8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // ── Nose ──
-  ctx.fillStyle = "#C06B18";
-  ctx.beginPath();
-  ctx.moveTo(-2, -4);
-  ctx.lineTo(2, -4);
-  ctx.lineTo(0, -2);
-  ctx.closePath();
-  ctx.fill();
-
-  // ── Mouth ──
-  ctx.strokeStyle = "#8B5E14";
-  ctx.lineWidth = 0.8;
-  if (state === "happy" || state === "petted") {
-    // Smile
-    ctx.beginPath();
-    ctx.arc(0, -2, 4, 0.1, Math.PI - 0.1);
-    ctx.stroke();
-  } else {
-    // Neutral W mouth
-    ctx.beginPath();
-    ctx.moveTo(-3, -1);
-    ctx.lineTo(-1, 1);
-    ctx.lineTo(0, -0.5);
-    ctx.lineTo(1, 1);
-    ctx.lineTo(3, -1);
-    ctx.stroke();
-  }
-
-  // ── Whiskers ──
-  ctx.strokeStyle = "#8B5E14";
-  ctx.lineWidth = 0.5;
-  // Left
-  ctx.beginPath();
-  ctx.moveTo(-12, -5);
-  ctx.lineTo(-6, -3);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(-13, -3);
-  ctx.lineTo(-6, -2);
-  ctx.stroke();
-  // Right
-  ctx.beginPath();
-  ctx.moveTo(12, -5);
-  ctx.lineTo(6, -3);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(13, -3);
-  ctx.lineTo(6, -2);
-  ctx.stroke();
-
-  // ── Hearts when petted ──
-  if (state === "petted" || state === "happy") {
-    const heartBounce = Math.sin(frame * 0.15) * 3;
-    ctx.fillStyle = "rgba(255, 100, 120, 0.8)";
-    ctx.font = `${4}px serif`;
-    ctx.fillText("♥", -16, -20 + heartBounce);
-    ctx.fillText("♥", 12, -22 - heartBounce);
-    if (state === "petted") {
-      ctx.fillText("♥", 0, -25 + heartBounce * 0.5);
+function getShapePoints(text, width = CANVAS_SIZE, height = CANVAS_SIZE) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  
+  ctx.clearRect(0, 0, width, height);
+  // Dynamic font size
+  const fontSize = text.length > 2 ? 65 : 110;
+  // Use a system emoji font to ensure it renders emojis cleanly, fallback to sans-serif
+  ctx.font = `bold ${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Inter", sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(text, width / 2, height / 2);
+  
+  const imageData = ctx.getImageData(0, 0, width, height).data;
+  const points = [];
+  
+  // Sample every 2 pixels for higher precision and detail
+  const step = 2;
+  for (let y = 0; y < height; y += step) {
+    for (let x = 0; x < width; x += step) {
+      const alpha = imageData[(y * width + x) * 4 + 3];
+      // Keep points with some opacity
+      if (alpha > 30) {
+        points.push({ x: x - width / 2, y: y - height / 2 });
+      }
     }
   }
-
-  ctx.restore();
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+  
+  // Shuffle points to make the morph mapping look organic and chaotic
+  for (let i = points.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [points[i], points[j]] = [points[j], points[i]];
+  }
+  
+  return points.length > 0 ? points : [{ x: 0, y: 0 }];
 }
 
 function InteractiveBuddy() {
   const canvasRef = useRef(null);
-  const [pos, setPos] = useState({ x: 0.5, y: 0.5 });
-  const [currentSection, setCurrentSection] = useState("hero");
-  const [lionState, setLionState] = useState("idle"); // idle, dizzy, happy, sleep, petted, blink
-  const [message, setMessage] = useState("");
-  const [showEmote, setShowEmote] = useState(null);
-  const [petCount, setPetCount] = useState(0);
-  const frameRef = useRef(0);
-  const scrollSpeedRef = useRef(0);
-  const lastScrollRef = useRef(0);
-  const idleTimerRef = useRef(null);
-  const animFrameRef = useRef(null);
+  const sectionRef = useRef("hero");
+  const canvasRectRef = useRef(null);
+  const mouseRef = useRef({ x: -1000, y: -1000 });
+  const pointsCacheRef = useRef({});
+  const particlesRef = useRef([]);
 
-  // ── Pick a random message for current section ──
-  const pickMessage = useCallback((section) => {
-    const msgs = SECTION_MESSAGES[section] || SECTION_MESSAGES.default;
-    return msgs[Math.floor(Math.random() * msgs.length)];
+  // Generate points cache and init particles
+  useEffect(() => {
+    Object.keys(SHAPES).forEach((key) => {
+      pointsCacheRef.current[key] = getShapePoints(SHAPES[key]);
+    });
+
+    const pts = [];
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      pts.push({
+        x: Math.random() * CANVAS_SIZE,
+        y: Math.random() * CANVAS_SIZE,
+        tx: 0, ty: 0,
+        vx: 0, vy: 0,
+        size: Math.random() * 1.0 + 0.6,
+        offset: Math.random() * 100
+      });
+    }
+    particlesRef.current = pts;
+    
+    // Initial rect
+    if (canvasRef.current) {
+      canvasRectRef.current = canvasRef.current.getBoundingClientRect();
+    }
   }, []);
 
-  // ── Mouse tracking ──
+  // Update rect on scroll/resize (throttled/passive)
+  useEffect(() => {
+    const updateRect = () => {
+      if (canvasRef.current) {
+        canvasRectRef.current = canvasRef.current.getBoundingClientRect();
+      }
+    };
+    window.addEventListener("scroll", updateRect, { passive: true });
+    window.addEventListener("resize", updateRect);
+    setTimeout(updateRect, 500); // ensure layout
+    return () => {
+      window.removeEventListener("scroll", updateRect);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, []);
+
+  // Mouse tracking globally so we know exactly when to scatter
   useEffect(() => {
     const handleMove = (e) => {
-      setPos({
-        x: e.clientX / window.innerWidth,
-        y: e.clientY / window.innerHeight,
-      });
+      if (!canvasRectRef.current) return;
+      const rect = canvasRectRef.current;
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    };
+    const handleLeave = () => {
+       mouseRef.current = { x: -1000, y: -1000 };
     };
     window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
+    window.addEventListener("mouseout", handleLeave);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseout", handleLeave);
+    };
   }, []);
 
-  // ── Section detection ──
+  // Section observer maps sections to shapes
   useEffect(() => {
     const sectionIds = ["hero", "about", "work", "skills", "contact", "aircanvas"];
     const observers = [];
@@ -278,8 +138,7 @@ function InteractiveBuddy() {
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-            setCurrentSection(id);
-            setMessage(pickMessage(id));
+            sectionRef.current = id;
           }
         },
         { threshold: [0.3, 0.5, 0.7] }
@@ -289,152 +148,105 @@ function InteractiveBuddy() {
       observers.push(observer);
     });
 
-    setMessage(pickMessage("hero"));
     return () => observers.forEach((obs) => obs.disconnect());
-  }, [pickMessage]);
+  }, []);
 
-  // ── Scroll speed detection ──
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const speed = Math.abs(window.scrollY - lastScrollRef.current);
-          scrollSpeedRef.current = speed;
-          lastScrollRef.current = window.scrollY;
-
-          if (speed > 80) {
-            setLionState("dizzy");
-            setMessage("Whoa, slow down! 😵‍💫");
-          } else if (lionState === "dizzy" && speed < 10) {
-            setLionState("idle");
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lionState]);
-
-  // ── Idle timer — lion falls asleep after 15s of no interaction ──
-  useEffect(() => {
-    const resetIdle = () => {
-      if (lionState === "sleep") {
-        setLionState("idle");
-        setMessage("I'm awake! 😸");
-      }
-      clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = setTimeout(() => {
-        setLionState("sleep");
-        setMessage("Zzz... 💤");
-      }, 15000);
-    };
-
-    window.addEventListener("mousemove", resetIdle);
-    window.addEventListener("scroll", resetIdle);
-    resetIdle();
-
-    return () => {
-      window.removeEventListener("mousemove", resetIdle);
-      window.removeEventListener("scroll", resetIdle);
-      clearTimeout(idleTimerRef.current);
-    };
-  }, [lionState]);
-
-  // ── Canvas animation loop ──
+  // Core Animation Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     const dpr = window.devicePixelRatio || 1;
 
-    // Set canvas size (retina friendly)
-    const displayW = 100;
-    const displayH = 90;
-    canvas.width = displayW * dpr;
-    canvas.height = displayH * dpr;
-    canvas.style.width = `${displayW}px`;
-    canvas.style.height = `${displayH}px`;
+    canvas.width = CANVAS_SIZE * dpr;
+    canvas.height = CANVAS_SIZE * dpr;
     ctx.scale(dpr, dpr);
 
-    const animate = () => {
-      frameRef.current++;
-      const eyeOffsetX = (pos.x - 0.5) * 2;
-      const eyeOffsetY = (pos.y - 0.5) * 2;
+    let animationFrameId;
+    let time = 0;
 
-      drawLion(ctx, displayW, displayH, eyeOffsetX, eyeOffsetY, lionState, frameRef.current);
-      animFrameRef.current = requestAnimationFrame(animate);
+    const render = () => {
+      time += 0.05;
+      
+      // Clear with fading trail to make particles glow slightly
+      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+      // Read accent color dynamically so it responds to theme changes instantly
+      const style = getComputedStyle(document.documentElement);
+      const isLight = document.documentElement.getAttribute("data-theme") === "light";
+      const baseColor = style.getPropertyValue("--accent").trim() || (isLight ? "#40c463" : "#39d353");
+
+      const section = sectionRef.current;
+      const targetPoints = pointsCacheRef.current[section] || pointsCacheRef.current["default"];
+      const pCount = Math.max(targetPoints.length, 1);
+      
+      const mouseX = mouseRef.current.x;
+      const mouseY = mouseRef.current.y;
+      
+      const cx = CANVAS_SIZE / 2;
+      const cy = CANVAS_SIZE / 2;
+
+      ctx.fillStyle = baseColor;
+      
+      particlesRef.current.forEach((p, i) => {
+        // Find mapped point
+        const pt = targetPoints[i % pCount];
+        
+        // Organic breathing/floating offset
+        const floatX = Math.sin(time + p.offset * 0.1) * 3;
+        const floatY = Math.cos(time + p.offset * 0.1) * 3;
+        
+        let tx = cx + pt.x + floatX;
+        let ty = cy + pt.y + floatY;
+        
+        // Mouse repulsion logic
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const repelRadius = 80;
+        
+        if (dist < repelRadius && dist > 0.1) {
+          const force = (repelRadius - dist) / repelRadius;
+          const angle = Math.atan2(dy, dx);
+          // Push outward strongly
+          tx -= Math.cos(angle) * force * 150;
+          ty -= Math.sin(angle) * force * 150;
+          
+          // Add chaotic vibration
+          tx += (Math.random() - 0.5) * force * 150;
+          ty += (Math.random() - 0.5) * force * 150;
+        }
+        
+        // Spring physics pulling to target
+        p.vx += (tx - p.x) * 0.06; // Spring stiffness
+        p.vy += (ty - p.y) * 0.06;
+        
+        // Friction/damping (less = bouncy, more = smooth)
+        p.vx *= 0.82;
+        p.vy *= 0.82;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      animationFrameId = requestAnimationFrame(render);
     };
 
-    animate();
+    render();
+
     return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [pos, lionState]);
-
-  // ── Pet the lion! ──
-  const handlePet = useCallback(() => {
-    setPetCount((prev) => prev + 1);
-    setLionState("petted");
-    
-    const petMessages = [
-      "*purrs loudly* 😻",
-      "More pets! 🥰",
-      "Best day ever! 💖",
-      "I love you! 🦁❤️",
-      "*happy roar* 🦁",
-    ];
-    setMessage(petMessages[Math.floor(Math.random() * petMessages.length)]);
-
-    // Random emote
-    setShowEmote(IDLE_EMOTES[Math.floor(Math.random() * IDLE_EMOTES.length)]);
-    setTimeout(() => setShowEmote(null), 1500);
-
-    // Return to idle after 3s
-    setTimeout(() => {
-      setLionState("idle");
-      setMessage(pickMessage(currentSection));
-    }, 3000);
-  }, [currentSection, pickMessage]);
-
-  // Body gentle follow
-  const offsetX = (pos.x - 0.5) * 15;
-  const offsetY = (pos.y - 0.5) * 15;
+  }, []);
 
   return (
-    <div
-      className="buddy-wrapper"
-      style={{
-        transform: `translate(${offsetX}px, ${offsetY}px)`,
-      }}
-    >
-      {/* Speech bubble */}
-      <div className="buddy-speech">
-        <p>{message}</p>
-      </div>
-
-      {/* Floating emote */}
-      {showEmote && (
-        <div className="buddy-emote">{showEmote}</div>
-      )}
-
-      {/* Canvas lion */}
-      <canvas
-        ref={canvasRef}
-        className="buddy-canvas"
-        onClick={handlePet}
-        title={`Pet the lion! (${petCount} pets)`}
-        style={{ cursor: "pointer" }}
-      />
-
-      {/* Pet counter badge */}
-      {petCount > 0 && (
-        <div className="buddy-pet-count">
-          ♥ {petCount}
-        </div>
-      )}
+    <div className="constellation-wrapper">
+      <canvas ref={canvasRef} className="constellation-canvas" />
     </div>
   );
 }
