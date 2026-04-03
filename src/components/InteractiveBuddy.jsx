@@ -1,254 +1,198 @@
 // src/components/InteractiveBuddy.jsx
-import React, { useEffect, useRef, useState } from "react";
-import "../App.css";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import "./RubiksCube.css";
 
-// Shapes map section to emoji/character
-const SHAPES = {
-  hero: "👻",
-  about: "👤",
-  work: "</>",
-  skills: "🧠",
-  contact: "✉️",
-  aircanvas: "✨",
-  default: "👻"
+/* ═══ Colors ═══ */
+const FACE_COLORS = {
+  front: "#ef4444",   // Red
+  back: "#f97316",    // Orange
+  left: "#22c55e",    // Green
+  right: "#3b82f6",   // Blue
+  top: "#f8fafc",     // White
+  bottom: "#eab308",  // Yellow
 };
+const FACE_KEYS = ["front", "back", "left", "right", "top", "bottom"];
 
-const NUM_PARTICLES = 1200;
-const CANVAS_SIZE = 240;
-
-function getShapePoints(text, width = CANVAS_SIZE, height = CANVAS_SIZE) {
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  
-  ctx.clearRect(0, 0, width, height);
-  // Dynamic font size
-  const fontSize = text.length > 2 ? 65 : 110;
-  // Use a system emoji font to ensure it renders emojis cleanly, fallback to sans-serif
-  ctx.font = `bold ${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Inter", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText(text, width / 2, height / 2);
-  
-  const imageData = ctx.getImageData(0, 0, width, height).data;
-  const points = [];
-  
-  // Sample every 2 pixels for higher precision and detail
-  const step = 2;
-  for (let y = 0; y < height; y += step) {
-    for (let x = 0; x < width; x += step) {
-      const alpha = imageData[(y * width + x) * 4 + 3];
-      // Keep points with some opacity
-      if (alpha > 30) {
-        points.push({ x: x - width / 2, y: y - height / 2 });
-      }
-    }
-  }
-  
-  // Shuffle points to make the morph mapping look organic and chaotic
-  for (let i = points.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [points[i], points[j]] = [points[j], points[i]];
-  }
-  
-  return points.length > 0 ? points : [{ x: 0, y: 0 }];
+/* ═══ Solved state helper ═══ */
+function solvedState() {
+  const s = {};
+  FACE_KEYS.forEach((f) => (s[f] = Array(9).fill(FACE_COLORS[f])));
+  return s;
 }
 
-function InteractiveBuddy() {
-  const canvasRef = useRef(null);
-  const sectionRef = useRef("hero");
-  const canvasRectRef = useRef(null);
-  const mouseRef = useRef({ x: -1000, y: -1000 });
-  const pointsCacheRef = useRef({});
-  const particlesRef = useRef([]);
+/* ═══ Rotate a 3×3 face array 90° clockwise ═══
+   0 1 2      6 3 0
+   3 4 5  →   7 4 1
+   6 7 8      8 5 2                                */
+function rotateCW(a) {
+  return [a[6], a[3], a[0], a[7], a[4], a[1], a[8], a[5], a[2]];
+}
 
-  // Generate points cache and init particles
+/* ═══ Move definitions ═══
+   Each move rotates one face CW and cycles 4 strips of 3 cells.
+   Cycle order: strip₀ ← strip₃ ← strip₂ ← strip₁ ← strip₀     */
+const MOVE_DEFS = [
+  // U — top row: front → right → back → left
+  {
+    face: "top",
+    cycle: [
+      ["front", [0, 1, 2]],
+      ["right", [0, 1, 2]],
+      ["back",  [0, 1, 2]],
+      ["left",  [0, 1, 2]],
+    ],
+  },
+  // D — bottom row: front → left → back → right
+  {
+    face: "bottom",
+    cycle: [
+      ["front",  [6, 7, 8]],
+      ["left",   [6, 7, 8]],
+      ["back",   [6, 7, 8]],
+      ["right",  [6, 7, 8]],
+    ],
+  },
+  // R — right column: front → top → back(reversed) → bottom
+  {
+    face: "right",
+    cycle: [
+      ["front",  [2, 5, 8]],
+      ["top",    [2, 5, 8]],
+      ["back",   [6, 3, 0]],
+      ["bottom", [2, 5, 8]],
+    ],
+  },
+  // L — left column: front → bottom → back(reversed) → top
+  {
+    face: "left",
+    cycle: [
+      ["front",  [0, 3, 6]],
+      ["bottom", [0, 3, 6]],
+      ["back",   [8, 5, 2]],
+      ["top",    [0, 3, 6]],
+    ],
+  },
+  // F — front face: top-bottom → right-left → bottom-top(rev) → left-right(rev)
+  {
+    face: "front",
+    cycle: [
+      ["top",    [6, 7, 8]],
+      ["right",  [0, 3, 6]],
+      ["bottom", [2, 1, 0]],
+      ["left",   [8, 5, 2]],
+    ],
+  },
+  // B — back face
+  {
+    face: "back",
+    cycle: [
+      ["top",    [2, 1, 0]],
+      ["left",   [0, 3, 6]],
+      ["bottom", [6, 7, 8]],
+      ["right",  [8, 5, 2]],
+    ],
+  },
+];
+
+/* ═══ Apply a single move to the cube state ═══ */
+function applyMove(state, def) {
+  // Deep-copy
+  const n = {};
+  FACE_KEYS.forEach((f) => (n[f] = [...state[f]]));
+
+  // 1. Rotate the target face CW
+  n[def.face] = rotateCW(state[def.face]);
+
+  // 2. Cycle the 4 three-cell strips (A ← D ← C ← B ← A)
+  const c = def.cycle;
+  const saved = c[0][1].map((idx) => state[c[0][0]][idx]);
+
+  for (let i = 0; i < 3; i++) n[c[0][0]][c[0][1][i]] = state[c[3][0]][c[3][1][i]];
+  for (let i = 0; i < 3; i++) n[c[3][0]][c[3][1][i]] = state[c[2][0]][c[2][1][i]];
+  for (let i = 0; i < 3; i++) n[c[2][0]][c[2][1][i]] = state[c[1][0]][c[1][1][i]];
+  for (let i = 0; i < 3; i++) n[c[1][0]][c[1][1][i]] = saved[i];
+
+  return n;
+}
+
+/* ═══ Pre-shuffle from solved ═══ */
+function scramble(n = 20) {
+  let s = solvedState();
+  for (let i = 0; i < n; i++) {
+    s = applyMove(s, MOVE_DEFS[Math.floor(Math.random() * MOVE_DEFS.length)]);
+  }
+  return s;
+}
+
+/* ═══ Component ═══ */
+export default function InteractiveBuddy() {
+  const [mode, setMode] = useState("shuffling"); // shuffling | solving | solved
+  const [faces, setFaces] = useState(() => scramble(20));
+  const [kick, setKick] = useState(false); // triggers a brief CSS kick
+  const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  /* ── Shuffling loop: apply a random move every 700ms ── */
   useEffect(() => {
-    Object.keys(SHAPES).forEach((key) => {
-      pointsCacheRef.current[key] = getShapePoints(SHAPES[key]);
-    });
+    if (mode !== "shuffling") return;
 
-    const pts = [];
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      pts.push({
-        x: Math.random() * CANVAS_SIZE,
-        y: Math.random() * CANVAS_SIZE,
-        tx: 0, ty: 0,
-        vx: 0, vy: 0,
-        size: Math.random() * 1.0 + 0.6,
-        offset: Math.random() * 100
-      });
-    }
-    particlesRef.current = pts;
-    
-    // Initial rect
-    if (canvasRef.current) {
-      canvasRectRef.current = canvasRef.current.getBoundingClientRect();
-    }
+    intervalRef.current = setInterval(() => {
+      const move = MOVE_DEFS[Math.floor(Math.random() * MOVE_DEFS.length)];
+      setFaces((prev) => applyMove(prev, move));
+
+      // Trigger a brief kick animation
+      setKick(true);
+      setTimeout(() => setKick(false), 250);
+    }, 700);
+
+    return () => clearInterval(intervalRef.current);
+  }, [mode]);
+
+  /* ── Click handler: solve → hold 5 s → shuffle again ── */
+  const handleClick = useCallback(() => {
+    if (mode !== "shuffling") return;
+    clearInterval(intervalRef.current);
+
+    setMode("solving");
+    setFaces(solvedState());
+
+    setTimeout(() => setMode("solved"), 800);
+
+    timeoutRef.current = setTimeout(() => {
+      setFaces(scramble(20));
+      setMode("shuffling");
+    }, 5800);
+  }, [mode]);
+
+  /* ── Cleanup ── */
+  useEffect(() => () => {
+    clearInterval(intervalRef.current);
+    clearTimeout(timeoutRef.current);
   }, []);
 
-  // Update rect on scroll/resize (throttled/passive)
-  useEffect(() => {
-    const updateRect = () => {
-      if (canvasRef.current) {
-        canvasRectRef.current = canvasRef.current.getBoundingClientRect();
-      }
-    };
-    window.addEventListener("scroll", updateRect, { passive: true });
-    window.addEventListener("resize", updateRect);
-    setTimeout(updateRect, 500); // ensure layout
-    return () => {
-      window.removeEventListener("scroll", updateRect);
-      window.removeEventListener("resize", updateRect);
-    };
-  }, []);
-
-  // Mouse tracking globally so we know exactly when to scatter
-  useEffect(() => {
-    const handleMove = (e) => {
-      if (!canvasRectRef.current) return;
-      const rect = canvasRectRef.current;
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-    };
-    const handleLeave = () => {
-       mouseRef.current = { x: -1000, y: -1000 };
-    };
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseout", handleLeave);
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseout", handleLeave);
-    };
-  }, []);
-
-  // Section observer maps sections to shapes
-  useEffect(() => {
-    const sectionIds = ["hero", "about", "work", "skills", "contact", "aircanvas"];
-    const observers = [];
-
-    sectionIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (!element) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-            sectionRef.current = id;
-          }
-        },
-        { threshold: [0.3, 0.5, 0.7] }
-      );
-
-      observer.observe(element);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
-  }, []);
-
-  // Core Animation Loop
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width = CANVAS_SIZE * dpr;
-    canvas.height = CANVAS_SIZE * dpr;
-    ctx.scale(dpr, dpr);
-
-    let animationFrameId;
-    let time = 0;
-
-    const render = () => {
-      time += 0.05;
-      
-      // Clear with fading trail to make particles glow slightly
-      ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-      // Read accent color dynamically so it responds to theme changes instantly
-      const style = getComputedStyle(document.documentElement);
-      const isLight = document.documentElement.getAttribute("data-theme") === "light";
-      const baseColor = style.getPropertyValue("--accent").trim() || (isLight ? "#40c463" : "#39d353");
-
-      const section = sectionRef.current;
-      const targetPoints = pointsCacheRef.current[section] || pointsCacheRef.current["default"];
-      const pCount = Math.max(targetPoints.length, 1);
-      
-      const mouseX = mouseRef.current.x;
-      const mouseY = mouseRef.current.y;
-      
-      const cx = CANVAS_SIZE / 2;
-      const cy = CANVAS_SIZE / 2;
-
-      ctx.fillStyle = baseColor;
-      
-      particlesRef.current.forEach((p, i) => {
-        // Find mapped point
-        const pt = targetPoints[i % pCount];
-        
-        // Organic breathing/floating offset
-        const floatX = Math.sin(time + p.offset * 0.1) * 3;
-        const floatY = Math.cos(time + p.offset * 0.1) * 3;
-        
-        let tx = cx + pt.x + floatX;
-        let ty = cy + pt.y + floatY;
-        
-        // Mouse repulsion logic
-        const dx = mouseX - p.x;
-        const dy = mouseY - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const repelRadius = 80;
-        
-        if (dist < repelRadius && dist > 0.1) {
-          const force = (repelRadius - dist) / repelRadius;
-          const angle = Math.atan2(dy, dx);
-          // Push outward strongly
-          tx -= Math.cos(angle) * force * 150;
-          ty -= Math.sin(angle) * force * 150;
-          
-          // Add chaotic vibration
-          tx += (Math.random() - 0.5) * force * 150;
-          ty += (Math.random() - 0.5) * force * 150;
-        }
-        
-        // Spring physics pulling to target
-        p.vx += (tx - p.x) * 0.06; // Spring stiffness
-        p.vy += (ty - p.y) * 0.06;
-        
-        // Friction/damping (less = bouncy, more = smooth)
-        p.vx *= 0.82;
-        p.vy *= 0.82;
-        
-        p.x += p.vx;
-        p.y += p.vy;
-        
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
+  /* ── Render ── */
+  const cubeClass = [
+    "rubiks-cube",
+    mode === "shuffling" ? "cube-shuffling" : "",
+    mode === "solving" ? "cube-solving" : "",
+    mode === "solved" ? "cube-solved" : "",
+    kick ? "cube-kick" : "",
+  ].join(" ");
 
   return (
-    <div className="constellation-wrapper">
-      <canvas ref={canvasRef} className="constellation-canvas" />
+    <div className="rubiks-wrapper" onClick={handleClick} title="Click to solve!">
+      <div className="my-loader">
+        <div className={cubeClass}>
+          {FACE_KEYS.map((face) => (
+            <div key={face} className={`face ${face}`}>
+              {faces[face].map((color, i) => (
+                <div key={i} className="rcube-cell" style={{ backgroundColor: color }} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      {mode === "shuffling" && <span className="cube-hint">Click to solve</span>}
     </div>
   );
 }
-
-export default InteractiveBuddy;

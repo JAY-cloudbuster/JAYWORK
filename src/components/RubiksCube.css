@@ -1,0 +1,152 @@
+/* src/components/RubiksCube.css */
+
+/* ═══ Wrapper ═══ */
+.rubiks-wrapper {
+  position: fixed;
+  left: 3%;
+  top: 5%;
+  z-index: 50;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  animation: float-cube 6s ease-in-out infinite;
+}
+
+@keyframes float-cube {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ═══ Click hint ═══ */
+.cube-hint {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-muted, #888);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: hint-fade 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hint-fade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.7; }
+}
+
+.rubiks-wrapper:hover .cube-hint {
+  opacity: 0.9 !important;
+  animation: none;
+}
+
+/* ═══ 3D Container ═══ */
+.my-loader {
+  --cube-size: 120px;
+  --half-size: 60px;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  perspective: 500px;
+  filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.35));
+}
+
+@media (min-width: 768px) {
+  .my-loader {
+    --cube-size: 140px;
+    --half-size: 70px;
+  }
+}
+
+[data-theme="light"] .my-loader {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.rubiks-wrapper:hover .my-loader {
+  filter: drop-shadow(0 0 28px rgba(200, 182, 255, 0.35));
+}
+
+/* ═══ The 3D Cube ═══ */
+.rubiks-cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease;
+}
+
+/* ── Shuffling: irregular handled-rotation ── */
+.rubiks-cube.cube-shuffling {
+  animation: shuffle-rotate 5s ease-in-out infinite;
+}
+
+@keyframes shuffle-rotate {
+  0%   { transform: rotateX(-20deg) rotateY(0deg); }
+  12%  { transform: rotateX(-30deg) rotateY(50deg); }
+  25%  { transform: rotateX(5deg)   rotateY(100deg); }
+  37%  { transform: rotateX(-15deg) rotateY(155deg); }
+  50%  { transform: rotateX(20deg)  rotateY(200deg); }
+  62%  { transform: rotateX(-5deg)  rotateY(250deg); }
+  75%  { transform: rotateX(15deg)  rotateY(300deg); }
+  87%  { transform: rotateX(-25deg) rotateY(340deg); }
+  100% { transform: rotateX(-20deg) rotateY(360deg); }
+}
+
+/* ── Kick: brief jolt on each move ── */
+.rubiks-cube.cube-kick {
+  animation: shuffle-rotate 5s ease-in-out infinite, move-kick 0.25s ease-out;
+}
+
+@keyframes move-kick {
+  0%   { filter: brightness(1); }
+  40%  { filter: brightness(1.15); }
+  100% { filter: brightness(1); }
+}
+
+/* ── Solving: smooth snap ── */
+.rubiks-cube.cube-solving {
+  animation: solve-snap 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes solve-snap {
+  to { transform: rotateX(-25deg) rotateY(35deg); }
+}
+
+/* ── Solved: gentle drift to show off ── */
+.rubiks-cube.cube-solved {
+  animation: solved-drift 10s linear infinite;
+}
+
+@keyframes solved-drift {
+  from { transform: rotateX(-25deg) rotateY(35deg); }
+  to   { transform: rotateX(-25deg) rotateY(395deg); }
+}
+
+/* ═══ Faces ═══ */
+.my-loader .face {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  backface-visibility: visible;
+}
+
+.my-loader .face.front  { transform: translateZ(var(--half-size)); }
+.my-loader .face.back   { transform: rotateY(180deg) translateZ(var(--half-size)); }
+.my-loader .face.left   { transform: rotateY(-90deg) translateZ(var(--half-size)); }
+.my-loader .face.right  { transform: rotateY(90deg) translateZ(var(--half-size)); }
+.my-loader .face.top    { transform: rotateX(90deg) translateZ(var(--half-size)); }
+.my-loader .face.bottom { transform: rotateX(-90deg) translateZ(var(--half-size)); }
+
+/* ═══ Individual cells ═══ */
+.rcube-cell {
+  width: calc(100% / 3);
+  height: calc(100% / 3);
+  box-sizing: border-box;
+  border: 1.5px solid rgba(0, 0, 0, 0.75);
+  border-radius: 3px;
+  /* This is key — smooth color transition so moves look like pieces sliding */
+  transition: background-color 0.3s ease;
+}
