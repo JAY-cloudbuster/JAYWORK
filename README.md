@@ -1,4 +1,4 @@
-# portfolio site under development
+# portfolio site under development(redefining)
 # things to do
 ### 1) update the project list
 ### 2) try using new tech(done)
